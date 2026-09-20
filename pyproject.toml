@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project_name"
+version = "0.1.0"
+description = "todo"
+authors = [
+    { name="Bruno Schilling", email="bruno.schilling@protonmail.ch" }
+]
+license = "MIT" 
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+
+[project.scripts]
+project_cli = "project_name.cli.main:main"
+
+[project.optional-dependencies]
+dev = ["pytest", "build", "twine"]
+
+[tool.setuptools.packages.find]
+where = ["."]
