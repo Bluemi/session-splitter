@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from project_name.cli.main import main
+from session-splitter.cli.main import main
 
 
 def test_main():

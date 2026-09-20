@@ -1,4 +1,4 @@
-# project_name
+# session-splitter
 
 Template for python projects.
 
