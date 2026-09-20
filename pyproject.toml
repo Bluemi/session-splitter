@@ -14,10 +14,16 @@ license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "inaspeechsegmenter>=0.8.0",
+    "numpy>=2.4.6",
+    "pydub>=0.25.1",
+    "pygame>=2.6.1",
+    "scipy>=1.17.1",
+    "tqdm>=4.70.1",
 ]
 
 [project.scripts]
-project_cli = "session_splitter.cli.main:main"
+session_splitter = "session_splitter.cli.main:main"
 
 [project.optional-dependencies]
 dev = ["pytest", "build", "twine"]
