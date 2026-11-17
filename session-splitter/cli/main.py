@@ -91,6 +91,9 @@ def main():
     playing = False
     play_start_pos = 0.0
     undo_stack = [copy.deepcopy(segments)]
+    
+    # Get audio duration for bounds checking
+    audio_duration = len(audio) / 1000.0  # Convert ms to seconds
 
     def save_state():
         undo_stack.append(copy.deepcopy(segments))
@@ -251,17 +254,29 @@ def main():
                     skip = 1.0 if shift else 3.0
                     new_pos = max(0, current_pos - skip)
                     if playing:
-                        pygame.mixer.music.play(start=new_pos)
-                        play_start_pos = new_pos
+                        try:
+                            pygame.mixer.music.play(start=new_pos)
+                            play_start_pos = new_pos
+                        except pygame.error:
+                            # Handle case where position is out of bounds
+                            pygame.mixer.music.stop()
+                            playing = False
                     else:
                         play_pos = new_pos
 
                 elif event.key == pygame.K_l and ctrl:
                     skip = 1.0 if shift else 3.0
                     new_pos = current_pos + skip
+                    # Ensure we don't seek past the audio duration
+                    new_pos = min(new_pos, audio_duration)
                     if playing:
-                        pygame.mixer.music.play(start=new_pos)
-                        play_start_pos = new_pos
+                        try:
+                            pygame.mixer.music.play(start=new_pos)
+                            play_start_pos = new_pos
+                        except pygame.error:
+                            # Handle case where position is out of bounds
+                            pygame.mixer.music.stop()
+                            playing = False
                     else:
                         play_pos = new_pos
 
@@ -289,22 +304,36 @@ def main():
                     view_start = max(0, view_start - 3.0)
 
                 elif event.key == pygame.K_l and not ctrl:
-                    view_start += 3.0
+                    # Calculate the maximum view start position to prevent scrolling past end
+                    max_view_start = max(0, audio_duration - (W / px_per_sec))
+                    view_start = min(view_start + 3.0, max_view_start)
 
                 elif event.key == pygame.K_j:
                     future_segs = [s for s in segments if s['start'] > current_pos + 0.1]
                     if future_segs:
                         next_seg = min(future_segs, key=lambda s: s['start'])
-                        if playing: pygame.mixer.music.play(start=next_seg['start'])
-                        play_start_pos = next_seg['start']
+                        if playing:
+                            try:
+                                pygame.mixer.music.play(start=next_seg['start'])
+                                play_start_pos = next_seg['start']
+                            except pygame.error:
+                                # Handle case where position is out of bounds
+                                pygame.mixer.music.stop()
+                                playing = False
                         play_pos = next_seg['start']
 
                 elif event.key == pygame.K_k:
                     past_segs = [s for s in segments if s['start'] < current_pos - 0.1]
                     if past_segs:
                         prev_seg = max(past_segs, key=lambda s: s['start'])
-                        if playing: pygame.mixer.music.play(start=prev_seg['start'])
-                        play_start_pos = prev_seg['start']
+                        if playing:
+                            try:
+                                pygame.mixer.music.play(start=prev_seg['start'])
+                                play_start_pos = prev_seg['start']
+                            except pygame.error:
+                                # Handle case where position is out of bounds
+                                pygame.mixer.music.stop()
+                                playing = False
                         play_pos = prev_seg['start']
 
                 elif event.key == pygame.K_z and ctrl:
