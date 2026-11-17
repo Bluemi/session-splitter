@@ -143,6 +143,16 @@ def main():
                     mouse_x, mouse_y = event.pos
                     mouse_time = view_start + (mouse_x / px_per_sec)
 
+                    # Check if clicked on timeline header
+                    if mouse_y <= 40:  # Timeline header is 40 pixels high
+                        # Set play position to clicked time
+                        play_pos = mouse_time
+                        if playing:
+                            pygame.mixer.music.play(start=play_pos)
+                            play_start_pos = play_pos
+                        last_click_time = pygame.time.get_ticks()
+                        break  # Don't process as segment click
+
                     clicked_seg = None
                     edge_clicked = None
                     margin = 5 / px_per_sec  # 5 pixels margin for edge
