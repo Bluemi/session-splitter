@@ -81,6 +81,9 @@ def main():
     pygame.mixer.init(frequency=framerate)
     pygame.mixer.music.load(temp_wav)
 
+    # Enable key repeats
+    pygame.key.set_repeat(250, 40)
+
     # UI State variables
     view_start = 0.0
     px_per_sec = 100.0
@@ -404,3 +407,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
